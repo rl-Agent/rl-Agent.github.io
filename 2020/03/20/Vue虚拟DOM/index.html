@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Vue,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Chasony's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="1、什么是虚拟DOM？所谓虚拟DOM，就是用一个JS对象来描述一个DOM节点，像如下示例： 1234567891011&amp;lt;div class=&quot;a&quot; id=&quot;b&quot;&amp;gt;我是内容&amp;lt;/div&amp;gt;&amp;#123;  tag:&apos;div&apos;,        // 元素标签  attrs:&amp;#123;           // 属性    class:&apos;a&apos;,    id:&apos;b&apos;  &amp;#125;,">
+<meta name="keywords" content="Vue">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue虚拟DOM">
+<meta property="og:url" content="http://yoursite.com/2020/03/20/Vue虚拟DOM/index.html">
+<meta property="og:site_name" content="Chasony&#39;s Blog">
+<meta property="og:description" content="1、什么是虚拟DOM？所谓虚拟DOM，就是用一个JS对象来描述一个DOM节点，像如下示例： 1234567891011&amp;lt;div class=&quot;a&quot; id=&quot;b&quot;&amp;gt;我是内容&amp;lt;/div&amp;gt;&amp;#123;  tag:&apos;div&apos;,        // 元素标签  attrs:&amp;#123;           // 属性    class:&apos;a&apos;,    id:&apos;b&apos;  &amp;#125;,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200318175640578.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NoYXNvbnk=,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2020-03-20T01:46:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue虚拟DOM">
+<meta name="twitter:description" content="1、什么是虚拟DOM？所谓虚拟DOM，就是用一个JS对象来描述一个DOM节点，像如下示例： 1234567891011&amp;lt;div class=&quot;a&quot; id=&quot;b&quot;&amp;gt;我是内容&amp;lt;/div&amp;gt;&amp;#123;  tag:&apos;div&apos;,        // 元素标签  attrs:&amp;#123;           // 属性    class:&apos;a&apos;,    id:&apos;b&apos;  &amp;#125;,">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200318175640578.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NoYXNvbnk=,size_16,color_FFFFFF,t_70">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/20/Vue虚拟DOM/">
+
+
+
+
+
+  <title>Vue虚拟DOM | Chasony's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Chasony's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">每个人都是一部终生学习的机器</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-react">
+          <a href="/categories/reactjs" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-reactjs"></i> <br>
+            
+            react
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-vue">
+          <a href="/categories/vuejs" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-vuejs"></i> <br>
+            
+            vue
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-javascript">
+          <a href="/categories/js" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-js"></i> <br>
+            
+            javascript
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/20/Vue虚拟DOM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChenShuoYu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chasony's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue虚拟DOM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-20T09:33:49+08:00">
+                2020-03-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vuejs/" itemprop="url" rel="index">
+                    <span itemprop="name">vuejs</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1、什么是虚拟DOM？"><a href="#1、什么是虚拟DOM？" class="headerlink" title="1、什么是虚拟DOM？"></a>1、什么是虚拟DOM？</h3><p>所谓虚拟DOM，就是用一个JS对象来描述一个DOM节点，像如下示例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"a"</span> id=<span class="string">"b"</span>&gt;我是内容&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">&#123;</span></span><br><span class="line"><span class="regexp">  tag:'div',        /</span><span class="regexp">/ 元素标签</span></span><br><span class="line"><span class="regexp">  attrs:&#123;           /</span><span class="regexp">/ 属性</span></span><br><span class="line"><span class="regexp">    class:'a',</span></span><br><span class="line"><span class="regexp">    id:'b'</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  text:'我是内容',  /</span><span class="regexp">/ 文本内容</span></span><br><span class="line"><span class="regexp">  children:[]       /</span><span class="regexp">/ 子元素</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们把组成一个DOM节点的必要东西通过一个JS对象表示出来，那么这个JS对象就可以用来描述这个DOM节点，我们把这个JS对象就称为是这个真实DOM节点的虚拟DOM节点。</p>
+<h3 id="2、为什么要有虚拟DOM？"><a href="#2、为什么要有虚拟DOM？" class="headerlink" title="2、为什么要有虚拟DOM？"></a>2、为什么要有虚拟DOM？</h3><p>我们知道，Vue是数据驱动视图的，数据发生变化视图就要随之更新，在更新视图的时候难免要操作DOM，而操作真实DOM又是非常耗费性能的，这是因为浏览器的标准就把DOM设计的非常复杂，所以一个真正的DOM元素是非常庞大的，如下所示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> div = <span class="built_in">document</span>.createElement(<span class="string">'div'</span>)</span><br><span class="line"><span class="keyword">let</span> str = <span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> div) &#123;</span><br><span class="line">  str += key + <span class="string">''</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(str)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20200318175640578.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0NoYXNvbnk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>上图中我们打印一个简单的空 div 标签，就打印出这么多东西，更不用说复杂的、深嵌套的 DOM 节点了。由此可见，真实的 DOM 节点数据会占据更大的内存，当我们频繁的去做 DOM 更新，会产生一定的性能问题，因为 DOM 的更新有可能带来页面的重绘或重排。</p>
+<p>那么有没有什么解决方案呢？当然是有的。我们可以用 JS 的计算性能来换取操作 DOM 所消耗的性能。</p>
+<p>既然我们逃不掉操作DOM这道坎,但是我们可以尽可能少的操作 DOM 。那如何在更新视图的时候尽可能少的操作 DOM 呢？最直观的思路就是我们不要盲目的去更新视图，而是通过对比数据变化前后的状态，计算出视图中哪些地方需要更新，只更新需要更新的地方，而不需要更新的地方则不需关心，这样我们就可以尽可能少的操作 DOM 了。这也就是上面所说的用 JS 的计算性能来换取操作 DOM 的性能。</p>
+<p>我们可以用 JS 模拟出一个 DOM 节点，称之为虚拟 DOM 节点。当数据发生变化时，我们对比变化前后的虚拟DOM节点，通过DOM-Diff算法计算出需要更新的地方，然后去更新需要更新的视图。</p>
+<p>这就是虚拟 DOM 产生的原因以及最大的用途。</p>
+<p>另外，使用虚拟 DOM 也能使得 Vue 不再依赖于浏览器环境。我们可以很容易的在 Broswer 端或者服务器端操作虚拟 DOM, 需要 render 时再将虚拟 DOM 转换为真实 DOM 即可。这也使得 Vue 有了实现服务器端渲染的能力。</p>
+<h3 id="3、Vue中的虚拟DOM"><a href="#3、Vue中的虚拟DOM" class="headerlink" title="3、Vue中的虚拟DOM"></a>3、Vue中的虚拟DOM</h3><p>前文我们介绍了虚拟DOM的概念以及为什么要有虚拟DOM，那么在Vue中虚拟DOM是怎么实现的呢？接下来，我们从源码出发，深入学习一下。</p>
+<h5 id="3-1-VNode类"><a href="#3-1-VNode类" class="headerlink" title="3.1 VNode类"></a>3.1 VNode类</h5><p>我们说了，虚拟DOM就是用JS来描述一个真实的DOM节点。而在Vue中就存在了一个VNode类，通过这个类，我们就可以实例化出不同类型的虚拟DOM节点，源码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">VNode</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span> (</span><br><span class="line">    tag?: string,</span><br><span class="line">    data?: VNodeData,</span><br><span class="line">    children?: ?Array&lt;VNode&gt;,</span><br><span class="line">    text?: string,</span><br><span class="line">    elm?: Node,</span><br><span class="line">    context?: Component,</span><br><span class="line">    componentOptions?: VNodeComponentOptions,</span><br><span class="line">    asyncFactory?: Function</span><br><span class="line">  ) &#123;</span><br><span class="line">    <span class="keyword">this</span>.tag = tag                                <span class="comment">/*当前节点的标签名*/</span></span><br><span class="line">    <span class="keyword">this</span>.data = data        <span class="comment">/*当前节点对应的对象，包含了具体的一些数据信息，是一个VNodeData类型，可以参考VNodeData类型中的数据信息*/</span></span><br><span class="line">    <span class="keyword">this</span>.children = children  <span class="comment">/*当前节点的子节点，是一个数组*/</span></span><br><span class="line">    <span class="keyword">this</span>.text = text     <span class="comment">/*当前节点的文本*/</span></span><br><span class="line">    <span class="keyword">this</span>.elm = elm       <span class="comment">/*当前虚拟节点对应的真实dom节点*/</span></span><br><span class="line">    <span class="keyword">this</span>.ns = <span class="literal">undefined</span>            <span class="comment">/*当前节点的名字空间*/</span></span><br><span class="line">    <span class="keyword">this</span>.context = context          <span class="comment">/*当前组件节点对应的Vue实例*/</span></span><br><span class="line">    <span class="keyword">this</span>.fnContext = <span class="literal">undefined</span>       <span class="comment">/*函数式组件对应的Vue实例*/</span></span><br><span class="line">    <span class="keyword">this</span>.fnOptions = <span class="literal">undefined</span></span><br><span class="line">    <span class="keyword">this</span>.fnScopeId = <span class="literal">undefined</span></span><br><span class="line">    <span class="keyword">this</span>.key = data &amp;&amp; data.key           <span class="comment">/*节点的key属性，被当作节点的标志，用以优化*/</span></span><br><span class="line">    <span class="keyword">this</span>.componentOptions = componentOptions   <span class="comment">/*组件的option选项*/</span></span><br><span class="line">    <span class="keyword">this</span>.componentInstance = <span class="literal">undefined</span>       <span class="comment">/*当前节点对应的组件的实例*/</span></span><br><span class="line">    <span class="keyword">this</span>.parent = <span class="literal">undefined</span>           <span class="comment">/*当前节点的父节点*/</span></span><br><span class="line">    <span class="keyword">this</span>.raw = <span class="literal">false</span>         <span class="comment">/*简而言之就是是否为原生HTML或只是普通文本，innerHTML的时候为true，textContent的时候为false*/</span></span><br><span class="line">    <span class="keyword">this</span>.isStatic = <span class="literal">false</span>         <span class="comment">/*静态节点标志*/</span></span><br><span class="line">    <span class="keyword">this</span>.isRootInsert = <span class="literal">true</span>      <span class="comment">/*是否作为跟节点插入*/</span></span><br><span class="line">    <span class="keyword">this</span>.isComment = <span class="literal">false</span>             <span class="comment">/*是否为注释节点*/</span></span><br><span class="line">    <span class="keyword">this</span>.isCloned = <span class="literal">false</span>           <span class="comment">/*是否为克隆节点*/</span></span><br><span class="line">    <span class="keyword">this</span>.isOnce = <span class="literal">false</span>                <span class="comment">/*是否有v-once指令*/</span></span><br><span class="line">    <span class="keyword">this</span>.asyncFactory = asyncFactory</span><br><span class="line">    <span class="keyword">this</span>.asyncMeta = <span class="literal">undefined</span></span><br><span class="line">    <span class="keyword">this</span>.isAsyncPlaceholder = <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">get</span> child (): Component | void &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.componentInstance</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的代码中可以看出：VNode类中包含了描述一个真实DOM节点所需要的一系列属性，如tag表示节点的标签名，text表示节点中包含的文本，children表示该节点包含的子节点等。通过属性之间不同的搭配，就可以描述出各种类型的真实DOM节点。</p>
+<h5 id="3-2-VNode的类型"><a href="#3-2-VNode的类型" class="headerlink" title="3.2 VNode的类型"></a>3.2 VNode的类型</h5><p>上一小节最后我们说了，通过属性之间不同的搭配，VNode类可以描述出各种类型的真实DOM节点。那么它都可以描述出哪些类型的节点呢？通过阅读源码，可以发现通过不同属性的搭配，可以描述出以下几种类型的节点。</p>
+<ul>
+<li>注释节点</li>
+<li>文本节点</li>
+<li>元素节点</li>
+<li>组件节点</li>
+<li>函数式组件节点</li>
+<li>克隆节点</li>
+</ul>
+<p>接下来，我们就把这几种类型的节点描述方式从源码中一一对应起来。</p>
+<p><a href="https://nlrx-wjc.github.io/Learn-Vue-Source-Code/virtualDOM/#_3-vue%E4%B8%AD%E7%9A%84%E8%99%9A%E6%8B%9Fdom" target="_blank" rel="noopener">详情见</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Vue/" rel="tag"># Vue</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/24/React-核心概念-10-组合vs继承/" rel="next" title="React-核心概念_10_组合vs继承">
+                <i class="fa fa-chevron-left"></i> React-核心概念_10_组合vs继承
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/28/VueDOM-Diff/" rel="prev" title="VueDOM-Diff">
+                VueDOM-Diff <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">ChenShuoYu</p>
+              <p class="site-description motion-element" itemprop="description">毕业时给你的“一张纸”对你来说没什么意义，这些年的成长才是你唯一能带走的东西</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、什么是虚拟DOM？"><span class="nav-number">1.</span> <span class="nav-text">1、什么是虚拟DOM？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、为什么要有虚拟DOM？"><span class="nav-number">2.</span> <span class="nav-text">2、为什么要有虚拟DOM？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、Vue中的虚拟DOM"><span class="nav-number">3.</span> <span class="nav-text">3、Vue中的虚拟DOM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-VNode类"><span class="nav-number">3.0.1.</span> <span class="nav-text">3.1 VNode类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-VNode的类型"><span class="nav-number">3.0.2.</span> <span class="nav-text">3.2 VNode的类型</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ChenShuoYu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
